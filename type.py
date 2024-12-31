@@ -1,4 +1,3 @@
-import pyautogui as pg
 import time
 import random
 import pandas as pd
