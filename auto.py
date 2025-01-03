@@ -27,22 +27,57 @@ def on_click(x, y, button, pressed):
 click_listener = Listener(on_click=on_click)
 click_listener.start()
 
+text = "placeholder"
+
 while not stop_flag.is_set():
 
     if mouse_clicked.is_set():
-        time.sleep(0.05)
-        screenshot = pg.screenshot(region=(400, 400, 630, 120))
+        start_time = time.time()
+        mode_screenshot = pg.screenshot(region=(665, 310, 80, 16))
+        pg.click(725,425, duration=0.2)
+        mode_image = mode_screenshot.convert("L")
+        mode = pytesseract.image_to_string(mode_image)
+        mode = mode.replace("\n", "")
 
-        pg.click(725,425, duration=0.2) # click to get rid of mac alert that I can't turn off
+        if mode == "10 words":
+            screenshot = pg.screenshot(region=(500, 400, 440, 20))
+            pg.click(725,425, duration=0.2) # click to get rid of mac alert that I can't turn off
+            image = screenshot.convert("L")
+            text = pytesseract.image_to_string(image)
+            text = text.replace("\n", " ")
+            pg.write(text)
+            pg.press("enter")
 
-        image = screenshot.convert("L")
+            mouse_clicked.clear()
+        
+        elif mode == "30 words":
+            for i in range(3):
+                screenshot = pg.screenshot(region=(500, 400, 440, 20))
+                pg.click(725,425, duration=0.2)
+                image = screenshot.convert("L")
+                text = pytesseract.image_to_string(image)
+                text = text.replace("\n", " ")
+                pg.write(text)
 
-        text = pytesseract.image_to_string(image)
-        text = text.replace("\n", " ")
+            pg.press("enter")
+            mouse_clicked.clear()
 
-        pg.write(text)
-        pg.press("enter")
+        else:
+            while True:
+                if stop_flag.is_set():
+                    break
+                
+                elapsed_time = time.time() - start_time
+                if elapsed_time > int(mode.split()[0]):
+                    break
 
-        mouse_clicked.clear()
+                screenshot = pg.screenshot(region=(500, 400, 440, 20))
+                pg.click(725,425, duration=0.2)
+                image = screenshot.convert("L")
+                text = pytesseract.image_to_string(image)
+                text = text.replace("\n", " ")
+                pg.write(text)
+            
+            mouse_clicked.clear()
     
     time.sleep(0.1)
