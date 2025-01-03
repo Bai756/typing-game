@@ -39,6 +39,10 @@ def start_game(mode):
     def update_words(event):
         typed_text = typing_area.get("1.0", "end-1c").strip()
         typed_words = typed_text.split()
+
+        lines = word_count // 10
+        typed_words = typed_words[lines * 10:]
+
         displayed_words = display_words.get("1.0", "end-1c").strip().split()
 
         display_words.config(state=tk.NORMAL)
@@ -66,10 +70,12 @@ def start_game(mode):
         nonlocal word_count
         word_count += 1
 
-        if (word_count) % 10 == 0:
+        if word_count % 10 == 0:
             display_words.config(state=tk.NORMAL)
             display_words.delete("1.0", tk.END)
-            display_words.insert(tk.END, " ".join(words[word_count:word_count + 20]))
+
+            for i in range(word_count, word_count + 20, 10):
+                display_words.insert(tk.END, " ".join(words[i:i + 10]))
             display_words.config(state=tk.DISABLED)
 
 
@@ -78,7 +84,11 @@ def start_game(mode):
 
         display_words.config(state=tk.NORMAL)
         display_words.delete("1.0", tk.END)
-        display_words.insert(tk.END, " ".join(words[:20]))
+        
+        for i in range(0, 20, 10): # do this to get rid of the space at the start of each line
+            line = " ".join(words[i:i + 10])
+            display_words.insert(tk.END, line)
+
         display_words.config(state=tk.DISABLED)
 
         typing_area.bind("<KeyRelease>", update_words)
@@ -90,7 +100,11 @@ def start_game(mode):
 
         display_words.config(state=tk.NORMAL)
         display_words.delete("1.0", tk.END)
-        display_words.insert(tk.END, " ".join(words[:20]))
+        
+        for i in range(0, 20, 10):
+            line = " ".join(words[i:i + 10])
+            display_words.insert(tk.END, line)
+
         display_words.config(state=tk.DISABLED)
 
 
@@ -100,9 +114,10 @@ def start_game(mode):
         window.after(int(mode.split()[0]) * 1000, lambda: check_typing(words, start_time, mode)) # ends after 10 or 30 seconds
 
 def check_typing(words, start_time, mode):
-    typed_words = typing_area.get("1.0", "end-1c")
+    typed_words_list = typing_area.get("1.0", "end-1c").split()
 
     end_time = time.time()
+    time_taken = end_time - start_time
 
     typing_area.config(state=tk.DISABLED)
     typing_area.unbind("<Return>")
@@ -111,10 +126,7 @@ def check_typing(words, start_time, mode):
     display_words.pack_forget()
     typing_area.pack_forget()
 
-    time_taken = end_time - start_time
-
     original_words = words
-    typed_words_list = typed_words.split()
 
     if mode == "10 words" or mode == "30 words":
         error = 0
@@ -122,8 +134,8 @@ def check_typing(words, start_time, mode):
             if i + 1 > len(typed_words_list):
                 error += len(original_words[i])
             else:
-                for j in range(len(original_words[i])):
-                    if j + 1 > len(typed_words_list[i]):
+                for j in range(len(original_words[i]) - 1):
+                    if j > len(typed_words_list[i]) - 1:
                         error += 1
                     elif original_words[i][j] != typed_words_list[i][j]:
                         error += 1
@@ -188,7 +200,7 @@ mode_menu.pack(pady=10)
 word_label = tk.Label(window, text="", font=("Helvetica", 18))
 word_label.pack(pady=10)
 
-display_words = tk.Text(window, font=("Helvetica", 14), height=5, width=60, wrap="word")
+display_words = tk.Text(window, font=("Helvetica", 14), height=2, width=55, wrap="word")
 display_words.pack(pady=10)
 display_words.config(state=tk.DISABLED)
 
@@ -197,7 +209,7 @@ display_words.tag_configure("incorrect", foreground="red")
 display_words.tag_configure("neutral", foreground="white")
 display_words.pack_forget()
 
-typing_area = tk.Text(window, font=("Helvetica", 14), height=5, width=50, wrap="word")
+typing_area = tk.Text(window, font=("Helvetica", 14), height=2, width=50, wrap="word")
 
 def on_start_button_click():
     mode = mode_var.get()

@@ -1,5 +1,5 @@
 # Typing game
-This is a typing speed and accuracy game remake using tkinter windows. There are 4 gamemodes: 15 words, 30 words, 10 seconds, and 30 seconds. 
+This is a typing speed and accuracy game remake using tkinter windows. There are 4 gamemodes: 15 words, 30 words, 10 seconds, and 30 seconds. There is now instant feedback, so the letters turn green or red if you get it right or wrong. Also, only two lines of words, 10 words on each line, is shown at a time.
 To run it, install dependencies and run type.py.
 
 ## Auto

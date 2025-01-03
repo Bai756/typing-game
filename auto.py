@@ -40,7 +40,7 @@ while not stop_flag.is_set():
         mode = mode.replace("\n", "")
 
         if mode == "10 words":
-            screenshot = pg.screenshot(region=(500, 400, 440, 20))
+            screenshot = pg.screenshot(region=(495, 400, 445, 20))
             pg.click(725,425, duration=0.2) # click to get rid of mac alert that I can't turn off
             image = screenshot.convert("L")
             text = pytesseract.image_to_string(image)
@@ -52,7 +52,7 @@ while not stop_flag.is_set():
         
         elif mode == "30 words":
             for i in range(3):
-                screenshot = pg.screenshot(region=(500, 400, 440, 20))
+                screenshot = pg.screenshot(region=(495, 400, 445, 20))
                 pg.click(725,425, duration=0.2)
                 image = screenshot.convert("L")
                 text = pytesseract.image_to_string(image)
@@ -71,7 +71,7 @@ while not stop_flag.is_set():
                 if elapsed_time > int(mode.split()[0]):
                     break
 
-                screenshot = pg.screenshot(region=(500, 400, 440, 20))
+                screenshot = pg.screenshot(region=(495, 400, 445, 20))
                 pg.click(725,425, duration=0.2)
                 image = screenshot.convert("L")
                 text = pytesseract.image_to_string(image)
